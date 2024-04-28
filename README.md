@@ -71,12 +71,68 @@ Automatically act on your data and communicate using third-party services like T
 
 
 # PROGRAM:
+```#include"ThingSpeak.h"
+#include<WiFi.h>
+#include "DHT.h"
+
+char ssid[]="GalaxyA30sBA5D";
+char pass[]="0123456789";
+
+const int t=23;
+WiFiClient client;
+DHT dht(23, DHT11);
+
+unsigned long myChannelField = 2495546;
+const int ChannelField1 = 1 ;
+const int ChannelField2 = 2 ;
+const char *myWriteAPIKey="37XGJVZMYOX5OKPI";
+
+void setup()
+{
+  Serial.begin(115200);
+  pinMode (t,OUTPUT);
+  WiFi.mode(WIFI_STA);
+  ThingSpeak.begin(client);
+  dht.begin();
+  delay(1000);
+}
+
+void loop()
+{
+  if(WiFi.status()!=WL_CONNECTED)
+  {
+    Serial.print("Attempting to connet to SSID: "); 
+    Serial.println(ssid);
+    while(WiFi.status() != WL_CONNECTED)
+    {
+      WiFi.begin(ssid, pass);
+      Serial.print(".");
+      delay(1000);
+    }
+    Serial.println("\nConnected");
+  }
+  float temperature = dht.readTemperature();
+  Serial.print("Temperature: ");
+  Serial.println(temperature);
+  Serial.print(" *C");
+  ThingSpeak.writeField(myChannelField, ChannelField1, temperature, myWriteAPIKey);
+ 
+  float humidity = dht.readHumidity();
+  Serial.print("Humidity: ");
+  Serial.println(humidity);
+  Serial.print(" *C");
+  ThingSpeak.writeField(myChannelField, ChannelField2, humidity, myWriteAPIKey);
+  delay(100);
+}
+```
 
 # CIRCUIT DIAGRAM:
+![image](https://github.com/keerthanajayasri/Uploading-sensor-data-in-Thing-Speak-cloud/assets/121163440/9efdc604-a6e9-42cc-ba6d-59e282617ab7)
 
 # OUTPUT:
+![image](https://github.com/keerthanajayasri/Uploading-sensor-data-in-Thing-Speak-cloud/assets/121163440/c73cf308-c6ab-40ce-b4c9-e3afaa57ccfd)
 
 # RESULT:
-
+Thus the temperature sensor values are updated in the Thing speak using ESP32 controller.
 Thus the temperature sensor values are updated in the Thing speak using ESP32 controller.
 
